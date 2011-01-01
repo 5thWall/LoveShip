@@ -69,6 +69,7 @@ function Ship:past_max( )
 end
 
 function Ship:render( )
+	gfx.setColor(255, 255, 255)
 	gfx.draw(self.image, self.x_pos, self.y_pos, self.angle, 0.5, 0.5, 32, 32)
 end
 
@@ -111,6 +112,7 @@ end
 
 function StarField:render( )
 	gfx.setColor(255, 255, 255)
+	
 	for i,v in ipairs(self.stars) do
 		gfx.circle("fill", v.x_pos, v.y_pos, v.size)
 	end
