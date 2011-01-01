@@ -11,6 +11,7 @@ function Ship:new( x, y )
 		angle = 0,
 		x_vel = 0,
 		y_vel = 0,
+		radius = 14,
 		turn_vel = 1.5,
 		thrust = false,
 		fuel_per_second = 50,
@@ -75,6 +76,10 @@ function Ship:past_max( )
 	return total_velocity > self.max_vel
 end
 
+function Ship:refuel( f )
+	self.fuel = self.fuel + f.fuel
+end
+
 function Ship:render( )
 	gfx.setColor(255, 255, 255)
 	gfx.draw(self.image, self.x_pos, self.y_pos, self.angle, 0.5, 0.5, 32, 32)
@@ -88,6 +93,7 @@ function Fuel:new( x, y )
 		image = gfx.newImage("images/love-ball.png"),
 		x_pos = x,
 		y_pos = y,
+		radius = 14,
 		fuel = 30,
 		fuel_quality = 1
 	}
@@ -103,7 +109,7 @@ end
 
 function Fuel:render( )
 	gfx.setColor(255, 255, 255)
-	gfx.draw(self.image, self.x_pos, self.y_pos)
+	gfx.draw(self.image, self.x_pos, self.y_pos, 0, 0.5, 0.5, 32, 32)
 end
 
 -- Starfield
@@ -174,7 +180,19 @@ function love.update( dt )
 	player:update_vel(dt)
 	player:update_pos(dt, w, h)
 	
+	if collides(player, fuel) then
+		player:refuel(fuel)
+		fuel:place(math.random(w), math.random(h))
+	end
+	
 	stars:move_stars(player.x_vel, player.y_vel, w, h)
+end
+
+function collides( ob1, ob2 )
+	local x1, y1, r1 = ob1.x_pos, ob1.y_pos, ob1.radius
+	local x2, y2, r2 = ob2.x_pos, ob2.y_pos, ob2.radius
+	
+	return (x1 - x2)^2 + (y1 - y2)^2 <= (r1 + r2)^2
 end
 
 function love.draw( )
