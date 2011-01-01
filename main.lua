@@ -69,7 +69,7 @@ function Ship:past_max( )
 end
 
 function Ship:render( )
-	gfx.draw(self.image, self.x_pos, self.y_pos, self.angle, 0.5, 0.5, 16, 16)
+	gfx.draw(self.image, self.x_pos, self.y_pos, self.angle, 0.5, 0.5, 32, 32)
 end
 
 -- Starfield
