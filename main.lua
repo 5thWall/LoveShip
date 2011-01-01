@@ -3,9 +3,9 @@ gfx = love.graphics
 -- Ship
 Ship = {}
 
-function Ship:new( i, x, y)
+function Ship:new( x, y )
 	local object = {
-		image = i,
+		image = gfx.newImage("images/ship.png"),
 		x_pos = x,
 		y_pos = y,
 		angle = 0,
@@ -19,7 +19,8 @@ function Ship:new( i, x, y)
 		turning_left = false,
 		turning_right = false,
 		fuel = 60,
-		force_per_fuel = 1 }
+		force_per_fuel = 1
+	}
 	
 	setmetatable(object, { __index = Ship })
 	return object
@@ -79,15 +80,44 @@ function Ship:render( )
 	gfx.draw(self.image, self.x_pos, self.y_pos, self.angle, 0.5, 0.5, 32, 32)
 end
 
+-- Fuel
+Fuel = {}
+
+function Fuel:new( x, y )
+	local object = {
+		image = gfx.newImage("images/love-ball.png"),
+		x_pos = x,
+		y_pos = y,
+		fuel = 30,
+		fuel_quality = 1
+	}
+	
+	setmetatable(object, { __index = Fuel } )
+	return object
+end
+
+function Fuel:place( x, y )
+	self.x_pos = x
+	self.y_pos = y
+end
+
+function Fuel:render( )
+	gfx.setColor(255, 255, 255)
+	gfx.draw(self.image, self.x_pos, self.y_pos)
+end
+
 -- Starfield
 StarField = {}
 
-function StarField:new( density, depth )
-	local object = { stars = {}, move_scale = 100 }
+function StarField:new( density, depth, width, height )
+	local object = { 
+		stars = {}, 
+		move_scale = 100 
+	}
 	
 	for i=1, density do
-		local x = math.random(love.graphics.getWidth())
-		local y = math.random(love.graphics.getHeight())
+		local x = math.random(width)
+		local y = math.random(height)
 		local s = math.random(depth, 3 * depth) / depth
 		object.stars[i] = { x_pos = x, y_pos = y, size = s }
 	end
@@ -126,12 +156,14 @@ end
 
 -- Love callbacks
 function love.load( )
-	local sprite = gfx.newImage("images/ship.png")
-	local x_pos = gfx.getWidth()/2
-	local y_pos = gfx.getHeight()/2
-	player = Ship:new(sprite, x_pos, y_pos)
+	local width = gfx.getWidth()
+	local height = gfx.getHeight()
 	
-	stars = StarField:new(200, 50)
+	player = Ship:new(width/2, height/2)
+	
+	fuel = Fuel:new(math.random(width), math.random(height))
+	
+	stars = StarField:new(200, 50, width, height)
 end
 
 function love.update( dt )
@@ -148,6 +180,7 @@ end
 function love.draw( )
 	stars:render()
 	player:render()
+	fuel:render()
 end
 
 function love.keypressed( key, unicode )
@@ -161,6 +194,10 @@ function love.keypressed( key, unicode )
 	
 	if key == "left" then
 		player.turning_left = true
+	end
+	
+	if key == "escape" then
+		end_game()
 	end
 end
 
@@ -176,4 +213,8 @@ function love.keyreleased( key, unicode )
 	if key == "left" then
 		player.turning_left = false
 	end
+end
+
+function end_game( )
+	love.event.push("q")
 end
