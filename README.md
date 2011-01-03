@@ -14,6 +14,9 @@ This is a simple game written for the [Love2D framework][love] and the [Dream.In
  * Limited fuel
  * Fuel refills
 
+### Working on:
+ * Refactor into multiple files.
+
 ### Next goal:
  * HUD
  * Expanded world
